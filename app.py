@@ -19,7 +19,7 @@ class Form(db.Model):
 
 # Создаем таблицу в базе данных (раскомментируйте при первом запуске для создания таблицы)
 # db.create_all()
-
+# фывфыввф
 @app.route('/')
 def index():
     categories_stats = db.session.query(Form.predicted_category, func.count().label('count')).group_by(Form.predicted_category).all()
