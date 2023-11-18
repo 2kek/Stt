@@ -1,0 +1,74 @@
+<!-- templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статистика по категориям</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Статистика по категориям</h1>
+
+        <div class="stats-container">
+            <ul class="stats-list">
+                <li class="list-header">
+                    <span>Категория</span>
+                    <span>Количество обращений</span>
+                    <span>%</span>
+                </li>
+                {% for stat in stats %}
+                    <li>
+                        <span class="category">{{ stat.category }}</span>
+                        <span class="count">{{ stat.count }}</span>
+                        {% if total_count > 0 %}
+                            <span class="percentage">({{ (stat.count / total_count * 100)|round(2) }}%)</span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <!-- Добавим диаграмму -->
+            <div class="chart-container">
+                <canvas id="myChart" class="chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var data = {
+                labels: [{% for stat in stats %}"{{ stat.category }}",{% endfor %}],
+                datasets: [{
+                    label: 'Категории',
+                    data: [{% for stat in stats %}{{ stat.count }},{% endfor %}],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(255, 159, 64, 0.6)'
+                    ]
+                }]
+            };
+            var options = {
+                responsive: true,
+                maintainAspectRatio: false,
+            };
+            var myChart = new Chart(ctx, {
+                type: 'pie',
+                data: data,
+                options: options
+            });
+        });
+    </script>
+</body>
+</html>
